@@ -60,41 +60,8 @@ export default function ParticleBackground() {
 
                 const wave = Math.sin(this.angle * 3) * 20;
 
-                // Compute where the particle *wants* to be
-                this.baseX = width / 2 + Math.cos(this.angle) * (this.currentRadius + wave);
-                this.baseY = height / 2 + Math.sin(this.angle) * (this.currentRadius + wave);
-
-                // Mouse interaction logic (Repulsion)
-                if (mouse.x != null && mouse.y != null) {
-                    let dx = mouse.x - this.baseX;
-                    let dy = mouse.y - this.baseY;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < mouse.radius) {
-                        // Particle is inside the mouse radius, push it away
-                        const forceDirectionX = dx / distance;
-                        const forceDirectionY = dy / distance;
-
-                        // Closer to mouse = stronger force. 
-                        // Use a slightly damped force to make it feel "spongy"
-                        const force = (mouse.radius - distance) / mouse.radius;
-
-                        // Max push distance
-                        const pushX = forceDirectionX * force * 50;
-                        const pushY = forceDirectionY * force * 50;
-
-                        this.x = this.baseX - pushX;
-                        this.y = this.baseY - pushY;
-                    } else {
-                        // Smoothly ease back to base pos
-                        this.x += (this.baseX - this.x) * 0.1;
-                        this.y += (this.baseY - this.y) * 0.1;
-                    }
-                } else {
-                    // No mouse, normal orbit
-                    this.x = this.baseX;
-                    this.y = this.baseY;
-                }
+                this.x = width / 2 + Math.cos(this.angle) * (this.currentRadius + wave);
+                this.y = height / 2 + Math.sin(this.angle) * (this.currentRadius + wave);
 
                 if (this.x < -100 || this.x > width + 100 || this.y < -100 || this.y > height + 100) {
                     this.reset();
@@ -132,16 +99,38 @@ export default function ParticleBackground() {
             }
         };
 
+        let currentMouseX = 0;
+        let currentMouseY = 0;
+        let targetMouseX = 0;
+        let targetMouseY = 0;
+
         const animate = () => {
-            // Use a slight fade instead of clearRect for a tiny bit of trailing effect, 
-            // similar to highly polished canvas setups
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; // Slower fade for longer dash trails
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
             ctx.fillRect(0, 0, width, height);
+
+            // Smoothly interpolate current mouse shifting towards target mouse shifting
+            if (mouse.x != null && mouse.y != null) {
+                // Calculate target shift based on distance from center (max 30px shift)
+                targetMouseX = ((mouse.x - width / 2) / width) * 60;
+                targetMouseY = ((mouse.y - height / 2) / height) * 60;
+            } else {
+                targetMouseX = 0;
+                targetMouseY = 0;
+            }
+
+            currentMouseX += (targetMouseX - currentMouseX) * 0.05;
+            currentMouseY += (targetMouseY - currentMouseY) * 0.05;
+
+            ctx.save();
+            // Shift the entire canvas drawing context for a smooth parallax effect
+            ctx.translate(-currentMouseX, -currentMouseY);
 
             particles.forEach(particle => {
                 particle.update();
                 particle.draw();
             });
+
+            ctx.restore();
 
             animationFrameId = requestAnimationFrame(animate);
         };
