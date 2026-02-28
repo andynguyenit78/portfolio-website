@@ -12,181 +12,163 @@ export default function ParticleBackground() {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        let particles = [];
         let animationFrameId;
         let width = window.innerWidth;
         let height = window.innerHeight;
 
-        // Mouse tracking for fluid wake interaction
-        let mouse = {
-            x: -1000,
-            y: -1000,
-            prevX: -1000,
-            prevY: -1000,
-            vx: 0,
-            vy: 0,
-            radius: 150 // Area of influence
+        // 3D Perspective setup
+        const FOV = Math.min(width, height) * 0.8;
+
+        // Sphere properties
+        // Make the sphere large enough to cover the background
+        const SPHERE_RADIUS = Math.min(width, height) * 0.8;
+        const NUM_PARTICLES = width < 768 ? 800 : 1500; // Responsive density
+        const PARTICLE_SIZES = [0.8, 1.2, 1.6, 2.0];
+
+        // Google colors
+        const colors = [
+            { r: 66, g: 133, b: 244 },  // Blue
+            { r: 234, g: 67, b: 53 },   // Red
+            { r: 251, g: 188, b: 5 },   // Yellow
+            { r: 52, g: 168, b: 83 }    // Green
+        ];
+
+        // Mouse tracking for 3D rotation
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetRotationX = 0;
+        let targetRotationY = 0;
+        let currentRotationX = 0;
+        let currentRotationY = 0;
+
+        // Base continuous rotation
+        let baseRotationY = 0;
+        let baseRotationX = 0;
+
+        let particles = [];
+
+        // Distribute points evenly on a sphere using Fibonacci sphere algorithm
+        const initParticles = () => {
+            particles = [];
+            const phi = Math.PI * (3 - Math.sqrt(5)); // Golden angle
+
+            for (let i = 0; i < NUM_PARTICLES; i++) {
+                // y goes from 1 to -1
+                const y = 1 - (i / (NUM_PARTICLES - 1)) * 2;
+                // radius at y
+                const radiusAtY = Math.sqrt(1 - y * y);
+
+                // golden angle increment
+                const theta = phi * i;
+
+                const x = Math.cos(theta) * radiusAtY;
+                const z = Math.sin(theta) * radiusAtY;
+
+                // Add subtle noise/jitter so it's not a perfect math sphere
+                const distanceOffset = 0.85 + Math.random() * 0.3;
+
+                particles.push({
+                    x: x * SPHERE_RADIUS * distanceOffset,
+                    y: y * SPHERE_RADIUS * distanceOffset,
+                    z: z * SPHERE_RADIUS * distanceOffset,
+                    baseSize: PARTICLE_SIZES[Math.floor(Math.random() * PARTICLE_SIZES.length)],
+                    color: colors[Math.floor(Math.random() * colors.length)]
+                });
+            }
         };
 
-        const colors = ['#4285F4', '#EA4335', '#FBBC05', '#34A853']; // Google colors
+        const render = () => {
+            // Faint trailing effect matching the light theme
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.fillRect(0, 0, width, height);
 
-        class Particle {
-            constructor() {
-                this.reset();
-            }
+            // Interpolate rotation for smooth mouse interaction
+            currentRotationX += (targetRotationX - currentRotationX) * 0.05;
+            currentRotationY += (targetRotationY - currentRotationY) * 0.05;
 
-            reset() {
-                this.x = width / 2;
-                this.y = height / 2;
+            // Continuous slow spin
+            baseRotationY += 0.0008;
+            baseRotationX += 0.0004;
 
-                // Base orbit properties
-                this.baseAngle = Math.random() * Math.PI * 2;
-                this.baseRadius = Math.random() * (width / 1.5);
-                this.orbitSpeed = Math.random() * 0.001 + 0.0005;
+            const totalRotY = currentRotationY + baseRotationY;
+            const totalRotX = currentRotationX + baseRotationX;
 
-                // Physics properties
-                this.vx = 0;
-                this.vy = 0;
-                this.friction = 0.92; // Damping
-                this.springFactor = 0.03; // Pull back to base orbit
+            // Pre-calculate sin/cos for rotation matrices
+            const sinY = Math.sin(totalRotY);
+            const cosY = Math.cos(totalRotY);
+            const sinX = Math.sin(totalRotX);
+            const cosX = Math.cos(totalRotX);
 
-                // Visual properties
-                this.size = Math.random() * 1.5 + 1;
-                // Capsule length relative to size
-                this.length = this.size * (Math.random() * 3 + 2);
-                this.color = colors[Math.floor(Math.random() * colors.length)];
-                this.opacity = Math.random() * 0.6 + 0.3;
+            // Project completely from 3D coords
+            particles.forEach((p) => {
+                // Rotation around Y axis (Horizontal mouse movement)
+                let rotY_X = p.x * cosY - p.z * sinY;
+                let rotY_Z = p.z * cosY + p.x * sinY;
+                let rotY_Y = p.y;
 
-                // Current apparent rotation (aligns with velocity)
-                this.rotation = this.baseAngle;
-            }
+                // Rotation around X axis (Vertical mouse movement)
+                let finalX = rotY_X;
+                let finalY = rotY_Y * cosX - rotY_Z * sinX;
+                let finalZ = rotY_Z * cosX + rotY_Y * sinX;
 
-            update() {
-                // 1. Calculate base "home" orbit position
-                this.baseAngle += this.orbitSpeed;
-                const targetX = width / 2 + Math.cos(this.baseAngle) * this.baseRadius;
-                const targetY = height / 2 + Math.sin(this.baseAngle) * this.baseRadius;
+                // Move sphere slightly back in Z space so it sits behind the screen
+                finalZ += SPHERE_RADIUS * 1.2;
 
-                // 2. Mouse Interaction (Fluid Wake / Momentum Transfer)
-                if (mouse.x > 0 && mouse.y > 0) {
-                    const dx = this.x - mouse.x;
-                    const dy = this.y - mouse.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
+                // 3D to 2D Projection
+                if (finalZ > -FOV) {
+                    const scale = FOV / (FOV + finalZ);
+                    const projX = (finalX * scale) + (width / 2);
+                    const projY = (finalY * scale) + (height / 2);
 
-                    if (distance < mouse.radius && (Math.abs(mouse.vx) > 0.1 || Math.abs(mouse.vy) > 0.1)) {
-                        // Inherit velocity from the mouse wake based on proximity
-                        const force = (mouse.radius - distance) / mouse.radius;
-                        this.vx += mouse.vx * force * 0.15;
-                        this.vy += mouse.vy * force * 0.15;
+                    const projectedSize = p.baseSize * scale;
+
+                    if (projectedSize > 0.1) {
+                        ctx.beginPath();
+                        ctx.arc(projX, projY, projectedSize, 0, Math.PI * 2);
+
+                        // Depth-based opacity (farther = more transparent)
+                        // Z roughly spans from 0 to SPHERE_RADIUS * 2.4
+                        const depthPercentage = finalZ / (SPHERE_RADIUS * 2.4);
+                        // Fade out objects in the back, keep objects in front solid
+                        let opacity = 1 - Math.pow(depthPercentage, 1.5);
+                        opacity = Math.max(0.05, Math.min(0.8, opacity));
+
+                        ctx.fillStyle = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, ${opacity})`;
+                        ctx.fill();
                     }
                 }
+            });
 
-                // 3. Spring back to base position
-                const dxHome = targetX - this.x;
-                const dyHome = targetY - this.y;
-                this.vx += dxHome * this.springFactor;
-                this.vy += dyHome * this.springFactor;
+            animationFrameId = requestAnimationFrame(render);
+        };
 
-                // 4. Apply friction (damping)
-                this.vx *= this.friction;
-                this.vy *= this.friction;
-
-                // 5. Update position based on velocity
-                this.x += this.vx;
-                this.y += this.vy;
-
-                // 6. Calculate rotation based on current movement direction
-                const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
-                if (speed > 0.1) {
-                    // Turn to face movement direction
-                    this.rotation = Math.atan2(this.vy, this.vx);
-                } else {
-                    // Slowly return to facing the orbit direction
-                    const targetRotation = this.baseAngle + Math.PI / 2;
-                    // Simplistic rotation smoothing (doesn't handle 360 wrap around perfectly but sufficient for small particles)
-                    this.rotation += (targetRotation - this.rotation) * 0.05;
-                }
-            }
-
-            draw() {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.rotation);
-
-                ctx.beginPath();
-                // Draw a small capsule/line that stretches based on velocity
-                const stretch = Math.max(1, Math.sqrt(this.vx * this.vx + this.vy * this.vy) * 0.2);
-                ctx.moveTo(-this.length * stretch, 0);
-                ctx.lineTo(this.length * stretch, 0);
-
-                ctx.strokeStyle = this.color;
-                ctx.lineWidth = this.size;
-                ctx.globalAlpha = this.opacity;
-                ctx.lineCap = 'round';
-                ctx.stroke();
-
-                ctx.restore();
-            }
-        }
-
-        const init = () => {
+        const handleResize = () => {
             width = window.innerWidth;
             height = window.innerHeight;
             canvas.width = width;
             canvas.height = height;
-
-            // Density based on screen size, similar to reference
-            const numberOfParticles = Math.floor((width * height) / 3000);
-            particles = [];
-            for (let i = 0; i < numberOfParticles; i++) {
-                particles.push(new Particle());
-                // Instantly advance them so they don't start clustered in the exact center
-                particles[i].x = width / 2 + Math.cos(particles[i].baseAngle) * particles[i].baseRadius;
-                particles[i].y = height / 2 + Math.sin(particles[i].baseAngle) * particles[i].baseRadius;
-            }
-        };
-
-        const animate = () => {
-            // Gentle fade for very slight trails, but mostly crisp capsules
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-            ctx.fillRect(0, 0, width, height);
-
-            // Calculate mouse velocity for this frame
-            mouse.vx = mouse.x - mouse.prevX;
-            mouse.vy = mouse.y - mouse.prevY;
-            mouse.prevX = mouse.x;
-            mouse.prevY = mouse.y;
-
-            // Decay mouse velocity if it stops moving
-            mouse.vx *= 0.8;
-            mouse.vy *= 0.8;
-
-            particles.forEach(particle => {
-                particle.update();
-                particle.draw();
-            });
-
-            animationFrameId = requestAnimationFrame(animate);
-        };
-
-        init();
-        animate();
-
-        const handleResize = () => {
-            init();
+            initParticles();
         };
 
         const handleMouseMove = (e) => {
-            mouse.prevX = mouse.x;
-            mouse.prevY = mouse.y;
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-        }
+            // Map mouse position to a rotation angle
+            // Limit rotation to a subtle tilt (e.g. +/- 30 degrees)
+            mouseX = (e.clientX / width) * 2 - 1;
+            mouseY = (e.clientY / height) * 2 - 1;
+
+            // Note: moving mouse right (positive X) should rotate around Y axis
+            // moving mouse down (positive Y) should rotate around X axis
+            targetRotationY = mouseX * (Math.PI / 6);
+            targetRotationX = -mouseY * (Math.PI / 6);
+        };
 
         const handleMouseLeave = () => {
-            mouse.x = -1000;
-            mouse.y = -1000;
-        }
+            targetRotationX = 0;
+            targetRotationY = 0;
+        };
+
+        handleResize();
+        render();
 
         window.addEventListener('resize', handleResize);
         window.addEventListener('mousemove', handleMouseMove);
@@ -210,8 +192,7 @@ export default function ParticleBackground() {
                 width: '100%',
                 height: '100%',
                 zIndex: -1,
-                pointerEvents: 'none',
-                opacity: 1
+                pointerEvents: 'none'
             }}
         />
     );
