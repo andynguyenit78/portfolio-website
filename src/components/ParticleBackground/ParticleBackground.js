@@ -17,12 +17,12 @@ export default function ParticleBackground() {
         let height = window.innerHeight;
 
         // 3D Perspective setup
-        const FOV = Math.min(width, height) * 0.8;
+        const FOV = Math.max(width, height);
 
         // Sphere properties
-        // Make the sphere large enough to cover the background
-        const SPHERE_RADIUS = Math.min(width, height) * 0.8;
-        const NUM_PARTICLES = width < 768 ? 800 : 1500; // Responsive density
+        // Make the sphere massive enough to fill the entire background
+        const SPHERE_RADIUS = Math.max(width, height) * 1.5;
+        const NUM_PARTICLES = width < 768 ? 1200 : 2500; // Increased density for larger sphere
         const PARTICLE_SIZES = [0.8, 1.2, 1.6, 2.0];
 
         // Google colors
