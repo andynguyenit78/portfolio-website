@@ -17,7 +17,14 @@ export default function ParticleBackground() {
         let width = window.innerWidth;
         let height = window.innerHeight;
 
-        const colors = ['#4285F4', '#EA4335', '#FBBC05', '#34A853', '#8A2BE2', '#FF69B4'];
+        // Mouse tracking for interaction
+        let mouse = {
+            x: undefined,
+            y: undefined,
+            radius: 120 // How far the repulsion effect reaches
+        };
+
+        const colors = ['#4285F4', '#EA4335', '#FBBC05', '#34A853']; // Main Google colors for closer match
 
         class Particle {
             constructor() {
@@ -25,45 +32,70 @@ export default function ParticleBackground() {
             }
 
             reset() {
-                // Start from center
                 this.x = width / 2;
                 this.y = height / 2;
 
-                // Random angle and distance
                 this.angle = Math.random() * Math.PI * 2;
-                this.radius = Math.random() * (width / 1.5);
+                this.radius = Math.random() * (width / 1.2);
 
-                // Final target positions based on vortex shape
-                this.targetX = width / 2 + Math.cos(this.angle) * this.radius;
-                this.targetY = height / 2 + Math.sin(this.angle) * this.radius;
-
-                // Current position starts near center and expands out
                 this.currentRadius = Math.random() * 50;
-
                 this.size = Math.random() * 2 + 1;
-                this.speed = Math.random() * 0.002 + 0.001; // Rotation speed
-                this.expansionSpeed = Math.random() * 2 + 0.5; // Outward speed
+                this.speed = Math.random() * 0.001 + 0.0005; // Slightly slower base rotation
+                this.expansionSpeed = Math.random() * 2 + 0.5;
 
                 this.color = colors[Math.floor(Math.random() * colors.length)];
-                this.opacity = Math.random() * 0.5 + 0.2;
+                this.opacity = Math.random() * 0.6 + 0.2;
+
+                // Base anchor position for the particle (without mouse interaction)
+                this.baseX = this.x;
+                this.baseY = this.y;
             }
 
             update() {
-                // Rotate slowly
                 this.angle += this.speed;
 
-                // Expand outwards until reaching target radius
                 if (this.currentRadius < this.radius) {
                     this.currentRadius += this.expansionSpeed;
                 }
 
-                // Add a slight wave/vortex effect to the radius based on angle
                 const wave = Math.sin(this.angle * 3) * 20;
 
-                this.x = width / 2 + Math.cos(this.angle) * (this.currentRadius + wave);
-                this.y = height / 2 + Math.sin(this.angle) * (this.currentRadius + wave);
+                // Compute where the particle *wants* to be
+                this.baseX = width / 2 + Math.cos(this.angle) * (this.currentRadius + wave);
+                this.baseY = height / 2 + Math.sin(this.angle) * (this.currentRadius + wave);
 
-                // Reset if it goes out of bounds (though technically it shouldn't often with the radius cap)
+                // Mouse interaction logic (Repulsion)
+                if (mouse.x != null && mouse.y != null) {
+                    let dx = mouse.x - this.baseX;
+                    let dy = mouse.y - this.baseY;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < mouse.radius) {
+                        // Particle is inside the mouse radius, push it away
+                        const forceDirectionX = dx / distance;
+                        const forceDirectionY = dy / distance;
+
+                        // Closer to mouse = stronger force. 
+                        // Use a slightly damped force to make it feel "spongy"
+                        const force = (mouse.radius - distance) / mouse.radius;
+
+                        // Max push distance
+                        const pushX = forceDirectionX * force * 50;
+                        const pushY = forceDirectionY * force * 50;
+
+                        this.x = this.baseX - pushX;
+                        this.y = this.baseY - pushY;
+                    } else {
+                        // Smoothly ease back to base pos
+                        this.x += (this.baseX - this.x) * 0.1;
+                        this.y += (this.baseY - this.y) * 0.1;
+                    }
+                } else {
+                    // No mouse, normal orbit
+                    this.x = this.baseX;
+                    this.y = this.baseY;
+                }
+
                 if (this.x < -100 || this.x > width + 100 || this.y < -100 || this.y > height + 100) {
                     this.reset();
                 }
@@ -72,13 +104,11 @@ export default function ParticleBackground() {
             draw() {
                 ctx.save();
                 ctx.translate(this.x, this.y);
-                // Rotate the dash to point somewhat along the circle
                 ctx.rotate(this.angle + Math.PI / 2);
 
                 ctx.beginPath();
-                // Draw a small dash instead of a circle, to match the visual reference
-                ctx.moveTo(0, -this.size * 2);
-                ctx.lineTo(0, this.size * 2);
+                ctx.moveTo(0, -this.size * 3); // Longer dashes 
+                ctx.lineTo(0, this.size * 3);
                 ctx.strokeStyle = this.color;
                 ctx.lineWidth = this.size;
                 ctx.globalAlpha = this.opacity;
@@ -95,8 +125,7 @@ export default function ParticleBackground() {
             canvas.width = width;
             canvas.height = height;
 
-            // Density based on screen size
-            const numberOfParticles = Math.floor((width * height) / 4000);
+            const numberOfParticles = Math.floor((width * height) / 3500); // Slightly more dense
             particles = [];
             for (let i = 0; i < numberOfParticles; i++) {
                 particles.push(new Particle());
@@ -104,7 +133,10 @@ export default function ParticleBackground() {
         };
 
         const animate = () => {
-            ctx.clearRect(0, 0, width, height);
+            // Use a slight fade instead of clearRect for a tiny bit of trailing effect, 
+            // similar to highly polished canvas setups
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; // Slower fade for longer dash trails
+            ctx.fillRect(0, 0, width, height);
 
             particles.forEach(particle => {
                 particle.update();
@@ -121,10 +153,24 @@ export default function ParticleBackground() {
             init();
         };
 
+        const handleMouseMove = (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        }
+
+        const handleMouseLeave = () => {
+            mouse.x = undefined;
+            mouse.y = undefined;
+        }
+
         window.addEventListener('resize', handleResize);
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseout', handleMouseLeave);
 
         return () => {
             window.removeEventListener('resize', handleResize);
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseout', handleMouseLeave);
             cancelAnimationFrame(animationFrameId);
         };
     }, []);
@@ -139,8 +185,8 @@ export default function ParticleBackground() {
                 width: '100%',
                 height: '100%',
                 zIndex: -1,
-                pointerEvents: 'none',
-                opacity: 0.6 // Keep it subtle so it doesn't overwhelm the content
+                pointerEvents: 'none', // Critical so it doesn't block underlying links
+                opacity: 1 // Raised opacity as the trails provide custom fading
             }}
         />
     );
