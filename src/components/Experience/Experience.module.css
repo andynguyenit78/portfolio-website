@@ -56,11 +56,14 @@
     font-family: var(--font-inter);
     font-weight: 600;
     color: var(--text-secondary);
-    width: 150px;
+    width: 200px;
+    /* Increased to prevent wrapping */
     padding-right: var(--spacing-lg);
     display: flex;
     justify-content: flex-end;
     padding-top: 2px;
+    flex-shrink: 0;
+    /* Prevent from shrinking when content is long */
 }
 
 .content {
