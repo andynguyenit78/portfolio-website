@@ -1,38 +1,36 @@
 "use client";
 
 import styles from "./Contact.module.css";
-import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 export default function Contact() {
-    const [isVisible, setIsVisible] = useState(false);
-    const sectionRef = useRef(null);
 
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setIsVisible(true);
-                    observer.disconnect();
-                }
-            },
-            { threshold: 0.2 }
-        );
-
-        if (sectionRef.current) observer.observe(sectionRef.current);
-
-        return () => observer.disconnect();
-    }, []);
+    const fadeUpVariant = {
+        hidden: { opacity: 0, y: 30 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+    };
 
     return (
-        <footer id="contact" ref={sectionRef} className={`section ${styles.contact} ${isVisible ? styles.visible : ""}`}>
-            <div className={`container ${styles.container}`}>
+        <section id="contact" className={`section ${styles.contact}`}>
+            <motion.div
+                className={`container ${styles.container}`}
+                variants={fadeUpVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-100px" }}
+            >
                 <h2 className={styles.title}>Get In Touch</h2>
                 <p className={styles.text}>
                     Whether you have a question, a project idea, or just want to say hi, I&apos;ll try my best to get back to you!
                 </p>
-                <a href="mailto:hello@example.com" className={styles.button}>
+                <motion.a
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    href="mailto:hello@example.com"
+                    className={styles.button}
+                >
                     Say Hello
-                </a>
+                </motion.a>
 
                 <div className={styles.socials}>
                     <a href="https://www.linkedin.com/in/thuongnguyen-it78/" target="_blank" rel="noopener noreferrer" className={styles.link}>LinkedIn</a>
@@ -40,9 +38,9 @@ export default function Contact() {
                 </div>
 
                 <div className={styles.copyright}>
-                    &copy; {new Date().getFullYear()} Thuong Nguyen. Built with Next.js.
+                    &copy; {new Date().getFullYear()} Thuong Nguyen. Built with Next.js & Framer Motion.
                 </div>
-            </div>
-        </footer>
+            </motion.div>
+        </section>
     );
 }

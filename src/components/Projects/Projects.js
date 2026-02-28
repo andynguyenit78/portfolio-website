@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./Projects.module.css";
-import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 const projects = [
     {
@@ -28,45 +28,58 @@ const projects = [
 ];
 
 export default function Projects() {
-    const [isVisible, setIsVisible] = useState(false);
-    const sectionRef = useRef(null);
 
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setIsVisible(true);
-                    observer.disconnect();
-                }
-            },
-            { threshold: 0.1 }
-        );
+    const fadeUpVariant = {
+        hidden: { opacity: 0, y: 30 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+    };
 
-        if (sectionRef.current) observer.observe(sectionRef.current);
-
-        return () => observer.disconnect();
-    }, []);
+    const cardVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: (idx) => ({
+            opacity: 1,
+            y: 0,
+            transition: { delay: idx * 0.15, duration: 0.5 }
+        })
+    };
 
     return (
-        <section id="projects" ref={sectionRef} className={`section ${styles.projects} ${isVisible ? styles.visible : ""}`}>
+        <section id="projects" className={`section ${styles.projects}`}>
             <div className="container">
-                <h2 className={styles.sectionTitle}>Featured Work</h2>
+                <motion.h2
+                    className={styles.sectionTitle}
+                    variants={fadeUpVariant}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-100px" }}
+                >
+                    Featured Work
+                </motion.h2>
                 <div className={styles.grid}>
-                    {projects.map((project) => (
-                        <div key={project.id} className={styles.card}>
+                    {projects.map((project, idx) => (
+                        <motion.div
+                            key={project.id}
+                            className={styles.card}
+                            custom={idx}
+                            variants={cardVariants}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true, margin: "-100px" }}
+                            whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                        >
                             <div className={styles.cardContent}>
                                 <h3 className={styles.title}>{project.title}</h3>
                                 <p className={styles.description}>{project.description}</p>
                                 <div className={styles.techStack}>
-                                    {project.tech.map((tech, idx) => (
-                                        <span key={idx} className={styles.techTag}>{tech}</span>
+                                    {project.tech.map((tech, i) => (
+                                        <span key={i} className={styles.techTag}>{tech}</span>
                                     ))}
                                 </div>
                                 <a href={project.link} className={styles.link}>
                                     View Project <span className={styles.arrow}>→</span>
                                 </a>
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
             </div>

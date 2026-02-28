@@ -1,13 +1,5 @@
 .projects {
     background-color: var(--bg-primary);
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
-}
-
-.projects.visible {
-    opacity: 1;
-    transform: translateY(0);
 }
 
 .sectionTitle {
@@ -28,13 +20,11 @@
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     overflow: hidden;
-    transition: all var(--transition-normal);
     display: flex;
     flex-direction: column;
 }
 
 .card:hover {
-    transform: translateY(-8px);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
     border-color: var(--text-primary);
 }

@@ -5,7 +5,7 @@
   --text-secondary: #666666;
   --accent: #000000;
   --border: #eaeaea;
-  
+
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
   --spacing-lg: 2rem;
@@ -51,6 +51,23 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
+
+  /* Subtle animated glowing background */
+  background: radial-gradient(circle at 15% 50%, rgba(200, 200, 200, 0.08), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(150, 150, 150, 0.06), transparent 25%);
+  background-color: var(--bg-primary);
+  background-size: 200vw 200vh;
+  animation: glowMove 20s infinite alternate ease-in-out;
+}
+
+@keyframes glowMove {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: 100% 50%;
+  }
 }
 
 a {
@@ -63,7 +80,12 @@ a:hover {
   color: var(--text-secondary);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 600;
   line-height: 1.2;
   margin-bottom: var(--spacing-md);

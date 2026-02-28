@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./Experience.module.css";
-import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 const experiences = [
     {
@@ -31,33 +31,36 @@ const experiences = [
 ];
 
 export default function Experience() {
-    const [isVisible, setIsVisible] = useState(false);
-    const sectionRef = useRef(null);
 
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setIsVisible(true);
-                    observer.disconnect();
-                }
-            },
-            { threshold: 0.2 }
-        );
-
-        if (sectionRef.current) observer.observe(sectionRef.current);
-
-        return () => observer.disconnect();
-    }, []);
+    const fadeUpVariant = {
+        hidden: { opacity: 0, y: 30 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+    };
 
     return (
-        <section id="experience" ref={sectionRef} className={`section ${styles.experience} ${isVisible ? styles.visible : ""}`}>
+        <section id="experience" className={`section ${styles.experience}`}>
             <div className="container">
-                <h2 className={styles.sectionTitle}>Work Experience</h2>
+                <motion.h2
+                    className={styles.sectionTitle}
+                    variants={fadeUpVariant}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-100px" }}
+                >
+                    Work Experience
+                </motion.h2>
 
                 <div className={styles.timeline}>
-                    {experiences.map((exp) => (
-                        <div key={exp.id} className={styles.item}>
+                    {experiences.map((exp, idx) => (
+                        <motion.div
+                            key={exp.id}
+                            className={styles.item}
+                            variants={fadeUpVariant}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true, margin: "-100px" }}
+                            transition={{ delay: idx * 0.1 }}
+                        >
                             <div className={styles.period}>{exp.period}</div>
                             <div className={styles.content}>
                                 <h3 className={styles.role}>{exp.role}</h3>
@@ -69,7 +72,7 @@ export default function Experience() {
                                     ))}
                                 </div>
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
             </div>

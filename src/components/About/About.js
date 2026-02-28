@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./About.module.css";
-import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 const skills = [
     "HTML5", "CSS3 / SCSS", "JavaScript (ES6+)", "TypeScript",
@@ -10,30 +10,23 @@ const skills = [
 ];
 
 export default function About() {
-    const [isVisible, setIsVisible] = useState(false);
-    const sectionRef = useRef(null);
 
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setIsVisible(true);
-                    observer.disconnect();
-                }
-            },
-            { threshold: 0.2 }
-        );
-
-        if (sectionRef.current) observer.observe(sectionRef.current);
-
-        return () => observer.disconnect();
-    }, []);
+    const fadeUpVariant = {
+        hidden: { opacity: 0, y: 30 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+    };
 
     return (
-        <section id="about" ref={sectionRef} className={`section ${styles.about} ${isVisible ? styles.visible : ""}`}>
+        <section id="about" className={`section ${styles.about}`}>
             <div className="container">
                 <div className={styles.grid}>
-                    <div className={styles.bio}>
+                    <motion.div
+                        className={styles.bio}
+                        variants={fadeUpVariant}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, margin: "-100px" }}
+                    >
                         <h2 className={styles.heading}>About Me</h2>
                         <p className={styles.text}>
                             I am a dedicated Front-End Developer with over four years of experience in web development, currently contributing to innovative projects at <strong>FPT Software</strong> in Ho Chi Minh City.
@@ -44,15 +37,28 @@ export default function About() {
                         <p className={styles.text}>
                             When I&apos;m not coding, I enjoy exploring new web design trends and continuously refining my craft to build pixel-perfect interfaces.
                         </p>
-                    </div>
-                    <div className={styles.skills}>
+                    </motion.div>
+
+                    <motion.div
+                        className={styles.skills}
+                        variants={fadeUpVariant}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, margin: "-100px" }}
+                    >
                         <h2 className={styles.heading}>My Skills</h2>
                         <ul className={styles.skillList}>
                             {skills.map((skill, index) => (
-                                <li key={index} className={styles.skillItem}>{skill}</li>
+                                <motion.li
+                                    key={index}
+                                    className={styles.skillItem}
+                                    whileHover={{ scale: 1.05, y: -2 }}
+                                >
+                                    {skill}
+                                </motion.li>
                             ))}
                         </ul>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
         </section>
