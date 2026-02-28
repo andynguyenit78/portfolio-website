@@ -17,14 +17,18 @@ export default function ParticleBackground() {
         let width = window.innerWidth;
         let height = window.innerHeight;
 
-        // Mouse tracking for interaction
+        // Mouse tracking for fluid wake interaction
         let mouse = {
-            x: undefined,
-            y: undefined,
-            radius: 120 // How far the repulsion effect reaches
+            x: -1000,
+            y: -1000,
+            prevX: -1000,
+            prevY: -1000,
+            vx: 0,
+            vy: 0,
+            radius: 150 // Area of influence
         };
 
-        const colors = ['#4285F4', '#EA4335', '#FBBC05', '#34A853']; // Main Google colors for closer match
+        const colors = ['#4285F4', '#EA4335', '#FBBC05', '#34A853']; // Google colors
 
         class Particle {
             constructor() {
@@ -35,47 +39,86 @@ export default function ParticleBackground() {
                 this.x = width / 2;
                 this.y = height / 2;
 
-                this.angle = Math.random() * Math.PI * 2;
-                this.radius = Math.random() * (width / 1.2);
+                // Base orbit properties
+                this.baseAngle = Math.random() * Math.PI * 2;
+                this.baseRadius = Math.random() * (width / 1.5);
+                this.orbitSpeed = Math.random() * 0.001 + 0.0005;
 
-                this.currentRadius = Math.random() * 50;
-                this.size = Math.random() * 2 + 1;
-                this.speed = Math.random() * 0.001 + 0.0005; // Slightly slower base rotation
-                this.expansionSpeed = Math.random() * 2 + 0.5;
+                // Physics properties
+                this.vx = 0;
+                this.vy = 0;
+                this.friction = 0.92; // Damping
+                this.springFactor = 0.03; // Pull back to base orbit
 
+                // Visual properties
+                this.size = Math.random() * 1.5 + 1;
+                // Capsule length relative to size
+                this.length = this.size * (Math.random() * 3 + 2);
                 this.color = colors[Math.floor(Math.random() * colors.length)];
-                this.opacity = Math.random() * 0.6 + 0.2;
+                this.opacity = Math.random() * 0.6 + 0.3;
 
-                // Base anchor position for the particle (without mouse interaction)
-                this.baseX = this.x;
-                this.baseY = this.y;
+                // Current apparent rotation (aligns with velocity)
+                this.rotation = this.baseAngle;
             }
 
             update() {
-                this.angle += this.speed;
+                // 1. Calculate base "home" orbit position
+                this.baseAngle += this.orbitSpeed;
+                const targetX = width / 2 + Math.cos(this.baseAngle) * this.baseRadius;
+                const targetY = height / 2 + Math.sin(this.baseAngle) * this.baseRadius;
 
-                if (this.currentRadius < this.radius) {
-                    this.currentRadius += this.expansionSpeed;
+                // 2. Mouse Interaction (Fluid Wake / Momentum Transfer)
+                if (mouse.x > 0 && mouse.y > 0) {
+                    const dx = this.x - mouse.x;
+                    const dy = this.y - mouse.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < mouse.radius && (Math.abs(mouse.vx) > 0.1 || Math.abs(mouse.vy) > 0.1)) {
+                        // Inherit velocity from the mouse wake based on proximity
+                        const force = (mouse.radius - distance) / mouse.radius;
+                        this.vx += mouse.vx * force * 0.15;
+                        this.vy += mouse.vy * force * 0.15;
+                    }
                 }
 
-                const wave = Math.sin(this.angle * 3) * 20;
+                // 3. Spring back to base position
+                const dxHome = targetX - this.x;
+                const dyHome = targetY - this.y;
+                this.vx += dxHome * this.springFactor;
+                this.vy += dyHome * this.springFactor;
 
-                this.x = width / 2 + Math.cos(this.angle) * (this.currentRadius + wave);
-                this.y = height / 2 + Math.sin(this.angle) * (this.currentRadius + wave);
+                // 4. Apply friction (damping)
+                this.vx *= this.friction;
+                this.vy *= this.friction;
 
-                if (this.x < -100 || this.x > width + 100 || this.y < -100 || this.y > height + 100) {
-                    this.reset();
+                // 5. Update position based on velocity
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // 6. Calculate rotation based on current movement direction
+                const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+                if (speed > 0.1) {
+                    // Turn to face movement direction
+                    this.rotation = Math.atan2(this.vy, this.vx);
+                } else {
+                    // Slowly return to facing the orbit direction
+                    const targetRotation = this.baseAngle + Math.PI / 2;
+                    // Simplistic rotation smoothing (doesn't handle 360 wrap around perfectly but sufficient for small particles)
+                    this.rotation += (targetRotation - this.rotation) * 0.05;
                 }
             }
 
             draw() {
                 ctx.save();
                 ctx.translate(this.x, this.y);
-                ctx.rotate(this.angle + Math.PI / 2);
+                ctx.rotate(this.rotation);
 
                 ctx.beginPath();
-                ctx.moveTo(0, -this.size * 3); // Longer dashes 
-                ctx.lineTo(0, this.size * 3);
+                // Draw a small capsule/line that stretches based on velocity
+                const stretch = Math.max(1, Math.sqrt(this.vx * this.vx + this.vy * this.vy) * 0.2);
+                ctx.moveTo(-this.length * stretch, 0);
+                ctx.lineTo(this.length * stretch, 0);
+
                 ctx.strokeStyle = this.color;
                 ctx.lineWidth = this.size;
                 ctx.globalAlpha = this.opacity;
@@ -92,45 +135,36 @@ export default function ParticleBackground() {
             canvas.width = width;
             canvas.height = height;
 
-            const numberOfParticles = Math.floor((width * height) / 3500); // Slightly more dense
+            // Density based on screen size, similar to reference
+            const numberOfParticles = Math.floor((width * height) / 3000);
             particles = [];
             for (let i = 0; i < numberOfParticles; i++) {
                 particles.push(new Particle());
+                // Instantly advance them so they don't start clustered in the exact center
+                particles[i].x = width / 2 + Math.cos(particles[i].baseAngle) * particles[i].baseRadius;
+                particles[i].y = height / 2 + Math.sin(particles[i].baseAngle) * particles[i].baseRadius;
             }
         };
 
-        let currentMouseX = 0;
-        let currentMouseY = 0;
-        let targetMouseX = 0;
-        let targetMouseY = 0;
-
         const animate = () => {
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+            // Gentle fade for very slight trails, but mostly crisp capsules
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
             ctx.fillRect(0, 0, width, height);
 
-            // Smoothly interpolate current mouse shifting towards target mouse shifting
-            if (mouse.x != null && mouse.y != null) {
-                // Calculate target shift based on distance from center (max 30px shift)
-                targetMouseX = ((mouse.x - width / 2) / width) * 60;
-                targetMouseY = ((mouse.y - height / 2) / height) * 60;
-            } else {
-                targetMouseX = 0;
-                targetMouseY = 0;
-            }
+            // Calculate mouse velocity for this frame
+            mouse.vx = mouse.x - mouse.prevX;
+            mouse.vy = mouse.y - mouse.prevY;
+            mouse.prevX = mouse.x;
+            mouse.prevY = mouse.y;
 
-            currentMouseX += (targetMouseX - currentMouseX) * 0.05;
-            currentMouseY += (targetMouseY - currentMouseY) * 0.05;
-
-            ctx.save();
-            // Shift the entire canvas drawing context for a smooth parallax effect
-            ctx.translate(-currentMouseX, -currentMouseY);
+            // Decay mouse velocity if it stops moving
+            mouse.vx *= 0.8;
+            mouse.vy *= 0.8;
 
             particles.forEach(particle => {
                 particle.update();
                 particle.draw();
             });
-
-            ctx.restore();
 
             animationFrameId = requestAnimationFrame(animate);
         };
@@ -143,13 +177,15 @@ export default function ParticleBackground() {
         };
 
         const handleMouseMove = (e) => {
+            mouse.prevX = mouse.x;
+            mouse.prevY = mouse.y;
             mouse.x = e.clientX;
             mouse.y = e.clientY;
         }
 
         const handleMouseLeave = () => {
-            mouse.x = undefined;
-            mouse.y = undefined;
+            mouse.x = -1000;
+            mouse.y = -1000;
         }
 
         window.addEventListener('resize', handleResize);
@@ -174,8 +210,8 @@ export default function ParticleBackground() {
                 width: '100%',
                 height: '100%',
                 zIndex: -1,
-                pointerEvents: 'none', // Critical so it doesn't block underlying links
-                opacity: 1 // Raised opacity as the trails provide custom fading
+                pointerEvents: 'none',
+                opacity: 1
             }}
         />
     );
