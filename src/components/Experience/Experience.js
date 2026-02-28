@@ -6,11 +6,27 @@ import { useEffect, useRef, useState } from "react";
 const experiences = [
     {
         id: 1,
-        role: "Front-End Developer",
+        role: "Senior Software Engineer",
         company: "FPT Software",
-        period: "2019 - Present",
-        description: "Specialized in front-end technologies, building responsive and high-performance web applications. Collaborated with cross-functional teams to deliver pixel-perfect user interfaces and smooth user experiences for large-scale enterprise clients.",
-        skills: ["React", "JavaScript", "HTML/CSS", "Web Performance"]
+        period: "Jul 2023 - Present",
+        description: "Participated in a Scrum team. Managed requirement gathering, feedback, ticket breakdown, and estimation. Developed frontend designs and implementations using React.js, and backend APIs with Java Spring Boot (including unit tests). Wrote test cases and maintained code quality.",
+        skills: ["React.js", "Java", "Spring Boot", "Scrum", "Frontend", "Backend", "Testing"]
+    },
+    {
+        id: 2,
+        role: "Frontend Developer",
+        company: "Estuary Solutions",
+        period: "Oct 2021 - Apr 2023",
+        description: "Communicated with stakeholders to build UI and integrate APIs. Developed and maintained web features with advanced animations (Framer Motion, CSS). Built responsive, cross-browser, SEO-friendly pages. Defined architecture, coding conventions, and mentored fresher developers.",
+        skills: ["Figma", "Next.js", "Framer Motion", "CSS", "UI/UX", "Mentoring"]
+    },
+    {
+        id: 3,
+        role: "Frontend Developer",
+        company: "Ant-Tech",
+        period: "Oct 2020 - Oct 2021",
+        description: "Participated in UI/UX discussions and API integration. Built reusable components and an internal shared component library. Optimized page speed and responsiveness for small-screen devices.",
+        skills: ["React Query", "Google Maps API", "React", "Performance Optimization"]
     }
 ];
 
