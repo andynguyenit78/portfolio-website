@@ -28,7 +28,7 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    left: 20px;
+    left: 200px;
     width: 2px;
     background-color: var(--border);
 }
@@ -42,7 +42,7 @@
 .item::before {
     content: '';
     position: absolute;
-    left: 14px;
+    left: 190px;
     top: 6px;
     width: 14px;
     height: 14px;
@@ -116,7 +116,7 @@
     }
 
     .item::before {
-        left: 4px;
+        left: 0px;
     }
 
     .period {
