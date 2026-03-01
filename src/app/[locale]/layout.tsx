@@ -18,13 +18,19 @@ export const metadata = {
   description: "Portfolio of Thuong Nguyen, Front-End Developer at FPT Software.",
 };
 
-export default async function RootLayout({ children, params }) {
+export default async function RootLayout({
+  children,
+  params
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
   // Await the params to resolve Next.js 15 async requirement
   const resolvedParams = await params;
   const locale = resolvedParams.locale;
 
   // Ensure that the incoming `locale` is valid
-  if (!routing.locales.includes(locale)) {
+  if (!(routing.locales as readonly string[]).includes(locale)) {
     notFound();
   }
 

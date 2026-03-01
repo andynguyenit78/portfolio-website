@@ -1,15 +1,15 @@
 "use client";
 
 import styles from "./Contact.module.css";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { useTranslations } from 'next-intl';
 
 export default function Contact() {
     const t = useTranslations('Contact');
 
-    const fadeUpVariant = {
+    const fadeUpVariant: Variants = {
         hidden: { opacity: 0, y: 30 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } }
     };
 
     return (

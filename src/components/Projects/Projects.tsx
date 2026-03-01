@@ -1,21 +1,29 @@
 "use client";
 
 import styles from "./Projects.module.css";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { useTranslations } from 'next-intl';
+
+interface ProjectItem {
+    id: number;
+    title: string;
+    description: string;
+    tech: string[];
+    link: string;
+}
 
 export default function Projects() {
     const t = useTranslations('Projects');
-    const projects = t.raw('items');
+    const projects = t.raw('items') as ProjectItem[];
 
-    const fadeUpVariant = {
+    const fadeUpVariant: Variants = {
         hidden: { opacity: 0, y: 30 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } }
     };
 
-    const cardVariants = {
+    const cardVariants: Variants = {
         hidden: { opacity: 0, y: 20 },
-        visible: (idx) => ({
+        visible: (idx: number) => ({
             opacity: 1,
             y: 0,
             transition: { delay: idx * 0.15, duration: 0.5 }
@@ -35,7 +43,7 @@ export default function Projects() {
                     {t('title')}
                 </motion.h2>
                 <div className={styles.grid}>
-                    {projects.map((project, idx) => (
+                    {projects.map((project: ProjectItem, idx: number) => (
                         <motion.div
                             key={project.id}
                             className={styles.card}
@@ -50,7 +58,7 @@ export default function Projects() {
                                 <h3 className={styles.title}>{project.title}</h3>
                                 <p className={styles.description}>{project.description}</p>
                                 <div className={styles.techStack}>
-                                    {project.tech.map((tech, i) => (
+                                    {project.tech.map((tech: string, i: number) => (
                                         <span key={i} className={styles.techTag}>{tech}</span>
                                     ))}
                                 </div>

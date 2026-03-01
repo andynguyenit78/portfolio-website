@@ -20,7 +20,7 @@ export default function Navbar() {
         setMounted(true);
     }, []);
 
-    const changeLocale = (nextLocale) => {
+    const changeLocale = (nextLocale: string) => {
         router.replace(pathname, { locale: nextLocale });
     };
 

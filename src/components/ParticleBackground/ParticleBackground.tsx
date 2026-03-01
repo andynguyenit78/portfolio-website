@@ -4,13 +4,15 @@ import { useEffect, useRef } from 'react';
 import { useTheme } from 'next-themes';
 
 export default function ParticleBackground() {
-    const canvasRef = useRef(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
     const { resolvedTheme } = useTheme();
     const themeRef = useRef('dark');
 
     // Keep the latest theme in a ref so the requestAnimationFrame loop can access it without restarting
     useEffect(() => {
-        themeRef.current = resolvedTheme;
+        if (resolvedTheme) {
+            themeRef.current = resolvedTheme;
+        }
     }, [resolvedTheme]);
 
     useEffect(() => {
@@ -20,7 +22,7 @@ export default function ParticleBackground() {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        let animationFrameId;
+        let animationFrameId: number;
         let width = window.innerWidth;
         let height = window.innerHeight;
 
@@ -32,6 +34,14 @@ export default function ParticleBackground() {
         const SPHERE_RADIUS = Math.max(width, height) * 1.5;
         const NUM_PARTICLES = width < 768 ? 1200 : 2500; // Increased density for larger sphere
         const PARTICLE_SIZES = [0.8, 1.2, 1.6, 2.0];
+
+        interface Particle {
+            x: number;
+            y: number;
+            z: number;
+            baseSize: number;
+            color: { r: number, g: number, b: number };
+        }
 
         // Google colors
         const colors = [
@@ -53,7 +63,7 @@ export default function ParticleBackground() {
         let baseRotationY = 0;
         let baseRotationX = 0;
 
-        let particles = [];
+        let particles: Particle[] = [];
 
         // Distribute points evenly on a sphere using Fibonacci sphere algorithm
         const initParticles = () => {
@@ -159,7 +169,7 @@ export default function ParticleBackground() {
             initParticles();
         };
 
-        const handleMouseMove = (e) => {
+        const handleMouseMove = (e: MouseEvent) => {
             // Map mouse position to a rotation angle
             // Limit rotation to a subtle tilt (e.g. +/- 30 degrees)
             mouseX = (e.clientX / width) * 2 - 1;

@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./About.module.css";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { useTranslations } from 'next-intl';
 
 const skills = [
@@ -13,9 +13,9 @@ const skills = [
 export default function About() {
     const t = useTranslations('About');
 
-    const fadeUpVariant = {
+    const fadeUpVariant: Variants = {
         hidden: { opacity: 0, y: 30 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } }
     };
 
     return (
@@ -50,7 +50,7 @@ export default function About() {
                     >
                         <h2 className={styles.heading}>{t('skillsTitle')}</h2>
                         <ul className={styles.skillList}>
-                            {skills.map((skill, index) => (
+                            {skills.map((skill: string, index: number) => (
                                 <motion.li
                                     key={index}
                                     className={styles.skillItem}

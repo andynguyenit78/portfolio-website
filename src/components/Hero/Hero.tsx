@@ -1,13 +1,13 @@
 "use client";
 
 import styles from "./Hero.module.css";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { useTranslations } from 'next-intl';
 
 export default function Hero() {
     const t = useTranslations('Hero');
 
-    const containerVariants = {
+    const containerVariants: Variants = {
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
@@ -18,7 +18,7 @@ export default function Hero() {
         }
     };
 
-    const itemVariants = {
+    const itemVariants: Variants = {
         hidden: { y: 20, opacity: 0 },
         visible: {
             y: 0,
