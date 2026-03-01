@@ -1,5 +1,5 @@
 import { Inter } from "next/font/google";
-import "../../globals.css"; // Fixed relative path since it moved into [locale]
+import "../globals.css";
 import ParticleBackground from "@/components/ParticleBackground/ParticleBackground";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
@@ -18,7 +18,11 @@ export const metadata = {
   description: "Portfolio of Thuong Nguyen, Front-End Developer at FPT Software.",
 };
 
-export default async function RootLayout({ children, params: { locale } }) {
+export default async function RootLayout({ children, params }) {
+  // Await the params to resolve Next.js 15 async requirement
+  const resolvedParams = await params;
+  const locale = resolvedParams.locale;
+
   // Ensure that the incoming `locale` is valid
   if (!routing.locales.includes(locale)) {
     notFound();
