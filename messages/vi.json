@@ -1,0 +1,121 @@
+{
+    "Navigation": {
+        "about": "Giới thiệu",
+        "experience": "Kinh nghiệm",
+        "projects": "Dự án",
+        "contact": "Liên hệ",
+        "resume": "CV"
+    },
+    "Hero": {
+        "greeting": "Xin chào, tôi là",
+        "name": "Thương Nguyễn.",
+        "title": "Front-End Developer.",
+        "description": "Tôi xây dựng những trải nghiệm kỹ thuật số hiện đại, sắc nét và thu hút. Hiện đang làm việc tại FPT Software.",
+        "viewWork": "Xem Dự Án",
+        "getInTouch": "Liên Hệ Ngay"
+    },
+    "About": {
+        "title": "Giới thiệu",
+        "p1": "Tôi là một kỹ sư Front-End tận tâm với hơn 4 năm kinh nghiệm trong lĩnh vực phát triển web, hiện đang đóng góp vào các dự án sáng tạo tại FPT Software ở TP.HCM.",
+        "p2": "Trọng tâm của tôi là thu hẹp khoảng cách giữa thiết kế và kỹ thuật, đảm bảo các ứng dụng không chỉ bắt mắt mà còn đạt hiệu năng cao và dễ tiếp cận cho mọi người dùng. Tôi luôn đề cao sự hợp tác và đam mê học hỏi những công nghệ mới để giải quyết các bài toán khó.",
+        "p3": "Khi không viết code, tôi thích tìm hiểu các xu hướng thiết kế web mới và liên tục mài giũa kỹ năng để tạo ra những giao diện hoàn hoản đến từng pixel.",
+        "skillsTitle": "Kỹ Năng Của Tôi"
+    },
+    "Experience": {
+        "title": "Kinh Nghiệm Làm Việc",
+        "items": [
+            {
+                "id": 1,
+                "role": "Kỹ Sư Phần Mềm Cấp Cao",
+                "company": "FPT Software",
+                "period": "Tháng 07/2023 - Nay",
+                "description": "Tham gia nhóm Scrum. Quản lý việc lấy yêu cầu, nhận phản hồi, phân chia công việc và ước tính thời gian. Phát triển thiết kế giao diện với React.js, và API phụ trợ bằng Java Spring Boot (kèm unit test). Viết test case và duy trì chất lượng mã nguồn.",
+                "skills": [
+                    "React.js",
+                    "Java",
+                    "Spring Boot",
+                    "Scrum",
+                    "Frontend",
+                    "Backend",
+                    "Testing"
+                ]
+            },
+            {
+                "id": 2,
+                "role": "Lập Trình Viên Frontend",
+                "company": "Estuary Solutions",
+                "period": "Tháng 10/2021 - Tháng 04/2023",
+                "description": "Giao tiếp với các bên liên quan để xây dựng UI và tích hợp API. Phát triển các tính năng web với hoạt ảnh nâng cao (Framer Motion, CSS). Xây dựng trang web tối ưu SEO, tương thích trên nhiều trình duyệt. Đặt ra chuẩn kiến trúc, quy tắc viết code và hướng dẫn các lập trình viên mới.",
+                "skills": [
+                    "Figma",
+                    "Next.js",
+                    "Framer Motion",
+                    "CSS",
+                    "UI/UX",
+                    "Mentoring"
+                ]
+            },
+            {
+                "id": 3,
+                "role": "Lập Trình Viên Frontend",
+                "company": "Ant-Tech",
+                "period": "Tháng 10/2020 - Tháng 10/2021",
+                "description": "Thảo luận về UI/UX và tích hợp API. Xây dựng các component có thể tái sử dụng và thư viện dùng chung trong nội bộ. Tối ưu tốc độ tải trang và độ phản hồi trên các thiết bị di động nhỏ.",
+                "skills": [
+                    "React Query",
+                    "Google Maps API",
+                    "React",
+                    "Tối Ưu Hiệu Năng"
+                ]
+            }
+        ]
+    },
+    "Projects": {
+        "title": "Dự Án Tiêu Biểu",
+        "viewProject": "Xem Dự Án",
+        "items": [
+            {
+                "id": 1,
+                "title": "E-Commerce Dashboard",
+                "description": "Một bảng điều khiển phân tích toàn diện cho các nhà bán lẻ trực tuyến, với khả năng trực quan hóa dữ liệu theo thời gian thực.",
+                "tech": [
+                    "Next.js",
+                    "React",
+                    "Chart.js",
+                    "CSS Modules"
+                ],
+                "link": "#"
+            },
+            {
+                "id": 2,
+                "title": "Ứng Dụng Quản Lý Công Việc",
+                "description": "Một công cụ quản lý dự án với tính năng cập nhật theo thời gian thực và bảng công việc hỗ trợ kéo thả tiện dụng.",
+                "tech": [
+                    "React",
+                    "TypeScript",
+                    "Redux",
+                    "Firebase"
+                ],
+                "link": "#"
+            },
+            {
+                "id": 3,
+                "title": "Sổ Thu Chi Cá Nhân",
+                "description": "Một ứng dụng theo dõi tài chính giúp người dùng giám sát chi tiêu, đặt hạn mức, và đạt được các mục tiêu tiết kiệm.",
+                "tech": [
+                    "JavaScript",
+                    "HTML5",
+                    "CSS3",
+                    "REST API"
+                ],
+                "link": "#"
+            }
+        ]
+    },
+    "Contact": {
+        "title": "Liên Hệ Ngay",
+        "text": "Cho dù bạn có câu hỏi, ý tưởng dự án hay chỉ muốn trò chuyện, tôi sẽ cố gắng phản hồi bạn sớm nhất có thể!",
+        "button": "Gửi Tin Nhắn",
+        "copyright": "Thuong Nguyen. Chạy bằng Next.js & Framer Motion."
+    }
+}

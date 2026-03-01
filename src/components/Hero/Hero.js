@@ -2,8 +2,10 @@
 
 import styles from "./Hero.module.css";
 import { motion } from "framer-motion";
+import { useTranslations } from 'next-intl';
 
 export default function Hero() {
+    const t = useTranslations('Hero');
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -33,11 +35,11 @@ export default function Hero() {
                 initial="hidden"
                 animate="visible"
             >
-                <motion.p variants={itemVariants} className={styles.greeting}>Hi, I am</motion.p>
-                <motion.h1 variants={itemVariants} className={styles.name}>Thuong Nguyen.</motion.h1>
-                <motion.h2 variants={itemVariants} className={styles.title}>Front-End Developer.</motion.h2>
+                <motion.p variants={itemVariants} className={styles.greeting}>{t('greeting')}</motion.p>
+                <motion.h1 variants={itemVariants} className={styles.name}>{t('name')}</motion.h1>
+                <motion.h2 variants={itemVariants} className={styles.title}>{t('title')}</motion.h2>
                 <motion.p variants={itemVariants} className={styles.description}>
-                    I build clean, modern, and engaging digital experiences. Currently crafting solutions at FPT Software.
+                    {t('description')}
                 </motion.p>
 
                 <motion.div variants={itemVariants} className={styles.ctaGroup}>
@@ -47,7 +49,7 @@ export default function Hero() {
                         href="#projects"
                         className={styles.primaryBtn}
                     >
-                        View My Work
+                        {t('viewWork')}
                     </motion.a>
                     <motion.a
                         whileHover={{ scale: 1.05 }}
@@ -55,7 +57,7 @@ export default function Hero() {
                         href="#contact"
                         className={styles.secondaryBtn}
                     >
-                        Get In Touch
+                        {t('getInTouch')}
                     </motion.a>
                 </motion.div>
             </motion.div>

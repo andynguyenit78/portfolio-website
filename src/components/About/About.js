@@ -2,6 +2,7 @@
 
 import styles from "./About.module.css";
 import { motion } from "framer-motion";
+import { useTranslations } from 'next-intl';
 
 const skills = [
     "HTML5", "CSS3 / SCSS", "JavaScript (ES6+)", "TypeScript",
@@ -10,6 +11,7 @@ const skills = [
 ];
 
 export default function About() {
+    const t = useTranslations('About');
 
     const fadeUpVariant = {
         hidden: { opacity: 0, y: 30 },
@@ -27,15 +29,15 @@ export default function About() {
                         whileInView="visible"
                         viewport={{ once: true, margin: "-100px" }}
                     >
-                        <h2 className={styles.heading}>About Me</h2>
+                        <h2 className={styles.heading}>{t('title')}</h2>
                         <p className={styles.text}>
-                            I am a dedicated Front-End Developer with over four years of experience in web development, currently contributing to innovative projects at <strong>FPT Software</strong> in Ho Chi Minh City.
+                            {t('p1')}
                         </p>
                         <p className={styles.text}>
-                            My focus is on bridging the gap between design and engineering, ensuring that the applications I build are not only visually appealing but also highly performant and accessible to all users. I thrive in collaborative environments and am passionate about learning and applying new technologies to solve complex problems.
+                            {t('p2')}
                         </p>
                         <p className={styles.text}>
-                            When I&apos;m not coding, I enjoy exploring new web design trends and continuously refining my craft to build pixel-perfect interfaces.
+                            {t('p3')}
                         </p>
                     </motion.div>
 
@@ -46,7 +48,7 @@ export default function About() {
                         whileInView="visible"
                         viewport={{ once: true, margin: "-100px" }}
                     >
-                        <h2 className={styles.heading}>My Skills</h2>
+                        <h2 className={styles.heading}>{t('skillsTitle')}</h2>
                         <ul className={styles.skillList}>
                             {skills.map((skill, index) => (
                                 <motion.li

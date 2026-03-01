@@ -2,32 +2,11 @@
 
 import styles from "./Projects.module.css";
 import { motion } from "framer-motion";
-
-const projects = [
-    {
-        id: 1,
-        title: "E-Commerce Dashboard",
-        description: "A comprehensive analytics dashboard for online retailers with real-time data visualization.",
-        tech: ["Next.js", "React", "Chart.js", "CSS Modules"],
-        link: "#"
-    },
-    {
-        id: 2,
-        title: "Task Management App",
-        description: "A collaborative project management tool featuring real-time updates and drag-and-drop boards.",
-        tech: ["React", "TypeScript", "Redux", "Firebase"],
-        link: "#"
-    },
-    {
-        id: 3,
-        title: "Finance Tracker",
-        description: "A personal finance application to track expenses, set budgets, and achieve financial goals.",
-        tech: ["JavaScript", "HTML5", "CSS3", "REST API"],
-        link: "#"
-    }
-];
+import { useTranslations } from 'next-intl';
 
 export default function Projects() {
+    const t = useTranslations('Projects');
+    const projects = t.raw('items');
 
     const fadeUpVariant = {
         hidden: { opacity: 0, y: 30 },
@@ -53,7 +32,7 @@ export default function Projects() {
                     whileInView="visible"
                     viewport={{ once: true, margin: "-100px" }}
                 >
-                    Featured Work
+                    {t('title')}
                 </motion.h2>
                 <div className={styles.grid}>
                     {projects.map((project, idx) => (
@@ -76,7 +55,7 @@ export default function Projects() {
                                     ))}
                                 </div>
                                 <a href={project.link} className={styles.link}>
-                                    View Project <span className={styles.arrow}>→</span>
+                                    {t('viewProject')} <span className={styles.arrow}>→</span>
                                 </a>
                             </div>
                         </motion.div>

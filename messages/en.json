@@ -1,0 +1,121 @@
+{
+    "Navigation": {
+        "about": "About",
+        "experience": "Experience",
+        "projects": "Projects",
+        "contact": "Contact",
+        "resume": "Resume"
+    },
+    "Hero": {
+        "greeting": "Hi, I am",
+        "name": "Thuong Nguyen.",
+        "title": "Front-End Developer.",
+        "description": "I build clean, modern, and engaging digital experiences. Currently crafting solutions at FPT Software.",
+        "viewWork": "View My Work",
+        "getInTouch": "Get In Touch"
+    },
+    "About": {
+        "title": "About Me",
+        "p1": "I am a dedicated Front-End Developer with over four years of experience in web development, currently contributing to innovative projects at FPT Software in Ho Chi Minh City.",
+        "p2": "My focus is on bridging the gap between design and engineering, ensuring that the applications I build are not only visually appealing but also highly performant and accessible to all users. I thrive in collaborative environments and am passionate about learning and applying new technologies to solve complex problems.",
+        "p3": "When I'm not coding, I enjoy exploring new web design trends and continuously refining my craft to build pixel-perfect interfaces.",
+        "skillsTitle": "My Skills"
+    },
+    "Experience": {
+        "title": "Work Experience",
+        "items": [
+            {
+                "id": 1,
+                "role": "Senior Software Engineer",
+                "company": "FPT Software",
+                "period": "Jul 2023 - Present",
+                "description": "Participated in a Scrum team. Managed requirement gathering, feedback, ticket breakdown, and estimation. Developed frontend designs and implementations using React.js, and backend APIs with Java Spring Boot (including unit tests). Wrote test cases and maintained code quality.",
+                "skills": [
+                    "React.js",
+                    "Java",
+                    "Spring Boot",
+                    "Scrum",
+                    "Frontend",
+                    "Backend",
+                    "Testing"
+                ]
+            },
+            {
+                "id": 2,
+                "role": "Frontend Developer",
+                "company": "Estuary Solutions",
+                "period": "Oct 2021 - Apr 2023",
+                "description": "Communicated with stakeholders to build UI and integrate APIs. Developed and maintained web features with advanced animations (Framer Motion, CSS). Built responsive, cross-browser, SEO-friendly pages. Defined architecture, coding conventions, and mentored fresher developers.",
+                "skills": [
+                    "Figma",
+                    "Next.js",
+                    "Framer Motion",
+                    "CSS",
+                    "UI/UX",
+                    "Mentoring"
+                ]
+            },
+            {
+                "id": 3,
+                "role": "Frontend Developer",
+                "company": "Ant-Tech",
+                "period": "Oct 2020 - Oct 2021",
+                "description": "Participated in UI/UX discussions and API integration. Built reusable components and an internal shared component library. Optimized page speed and responsiveness for small-screen devices.",
+                "skills": [
+                    "React Query",
+                    "Google Maps API",
+                    "React",
+                    "Performance Optimization"
+                ]
+            }
+        ]
+    },
+    "Projects": {
+        "title": "Featured Work",
+        "viewProject": "View Project",
+        "items": [
+            {
+                "id": 1,
+                "title": "E-Commerce Dashboard",
+                "description": "A comprehensive analytics dashboard for online retailers with real-time data visualization.",
+                "tech": [
+                    "Next.js",
+                    "React",
+                    "Chart.js",
+                    "CSS Modules"
+                ],
+                "link": "#"
+            },
+            {
+                "id": 2,
+                "title": "Task Management App",
+                "description": "A collaborative project management tool featuring real-time updates and drag-and-drop boards.",
+                "tech": [
+                    "React",
+                    "TypeScript",
+                    "Redux",
+                    "Firebase"
+                ],
+                "link": "#"
+            },
+            {
+                "id": 3,
+                "title": "Finance Tracker",
+                "description": "A personal finance application to track expenses, set budgets, and achieve financial goals.",
+                "tech": [
+                    "JavaScript",
+                    "HTML5",
+                    "CSS3",
+                    "REST API"
+                ],
+                "link": "#"
+            }
+        ]
+    },
+    "Contact": {
+        "title": "Get In Touch",
+        "text": "Whether you have a question, a project idea, or just want to say hi, I'll try my best to get back to you!",
+        "button": "Say Hello",
+        "copyright": "Thuong Nguyen. Built with Next.js & Framer Motion."
+    }
+}

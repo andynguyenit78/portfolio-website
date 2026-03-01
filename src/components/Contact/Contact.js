@@ -2,8 +2,10 @@
 
 import styles from "./Contact.module.css";
 import { motion } from "framer-motion";
+import { useTranslations } from 'next-intl';
 
 export default function Contact() {
+    const t = useTranslations('Contact');
 
     const fadeUpVariant = {
         hidden: { opacity: 0, y: 30 },
@@ -19,9 +21,9 @@ export default function Contact() {
                 whileInView="visible"
                 viewport={{ once: true, margin: "-100px" }}
             >
-                <h2 className={styles.title}>Get In Touch</h2>
+                <h2 className={styles.title}>{t('title')}</h2>
                 <p className={styles.text}>
-                    Whether you have a question, a project idea, or just want to say hi, I&apos;ll try my best to get back to you!
+                    {t('text')}
                 </p>
                 <motion.a
                     whileHover={{ scale: 1.05 }}
@@ -29,7 +31,7 @@ export default function Contact() {
                     href="mailto:hello@example.com"
                     className={styles.button}
                 >
-                    Say Hello
+                    {t('button')}
                 </motion.a>
 
                 <div className={styles.socials}>
@@ -38,7 +40,7 @@ export default function Contact() {
                 </div>
 
                 <div className={styles.copyright}>
-                    &copy; {new Date().getFullYear()} Thuong Nguyen. Built with Next.js & Framer Motion.
+                    &copy; {new Date().getFullYear()} {t('copyright')}
                 </div>
             </motion.div>
         </section>

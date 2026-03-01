@@ -1,0 +1,58 @@
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    z-index: 100;
+    background: transparent;
+}
+
+.button {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.button:hover {
+    background: var(--bg-secondary);
+    border-color: var(--text-secondary);
+}
+
+.buttonWrapper {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.localeLink {
+    text-decoration: none;
+    color: var(--text-secondary);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.localeLink:hover {
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+}
+
+.activeLocale {
+    color: var(--text-primary);
+    font-weight: 700;
+}

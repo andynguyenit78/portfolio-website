@@ -19,16 +19,13 @@
   --transition-normal: 0.3s ease;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Forcing light mode aesthetic for this specific requirement */
-    --bg-primary: #ffffff;
-    --bg-secondary: #f9f9f9;
-    --text-primary: #111111;
-    --text-secondary: #666666;
-    --accent: #000000;
-    --border: #eaeaea;
-  }
+.dark {
+  --bg-primary: #050505;
+  --bg-secondary: #0a0a0a;
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  --accent: #ffffff;
+  --border: #333333;
 }
 
 * {
