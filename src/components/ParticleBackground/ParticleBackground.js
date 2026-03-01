@@ -1,9 +1,17 @@
 "use client";
 
 import { useEffect, useRef } from 'react';
+import { useTheme } from 'next-themes';
 
 export default function ParticleBackground() {
     const canvasRef = useRef(null);
+    const { resolvedTheme } = useTheme();
+    const themeRef = useRef('dark');
+
+    // Keep the latest theme in a ref so the requestAnimationFrame loop can access it without restarting
+    useEffect(() => {
+        themeRef.current = resolvedTheme;
+    }, [resolvedTheme]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -78,8 +86,9 @@ export default function ParticleBackground() {
         };
 
         const render = () => {
-            // Faint trailing effect matching the light theme
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+            // Faint trailing effect matching the current theme
+            const isDark = themeRef.current === 'dark';
+            ctx.fillStyle = isDark ? 'rgba(5, 5, 5, 0.4)' : 'rgba(255, 255, 255, 0.4)';
             ctx.fillRect(0, 0, width, height);
 
             // Interpolate rotation for smooth mouse interaction
